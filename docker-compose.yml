@@ -22,14 +22,15 @@ services:
     command: >
       bash -c "
         if [ ! -f /home/frappe/.bootstrapped ]; then
-          bench init frappe-bench --frappe-branch version-15 &&
+          bench init frappe-bench --ignore-exist --frappe-branch version-15 \
+          --apps_path frappe/frappe-bench/sites/apps/json &&
           bench setup env &&
           bench setup requirements &&
-          yarn install &&
-          touch /home/frappe/.bootstrapped
+          yarn install
         fi &&
         cd /home/frappe/frappe-bench &&
         bench set-config -g developer_mode true &&
+        touch /home/frappe/.bootstrapped
         tail -f /dev/null"
 
   mariadb:
