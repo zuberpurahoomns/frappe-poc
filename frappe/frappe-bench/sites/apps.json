@@ -6,7 +6,7 @@
         },
         "required": [],
         "idx": 1,
-        "version": "16.0.0-dev"
+        "version": "15.62.0"
     },
     "library_management": {
         "is_repo": true,

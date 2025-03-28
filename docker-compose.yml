@@ -2,16 +2,13 @@ version: "3"
 
 services:
   frappe:
-    container_name: frappe
-    build:
-      context: .
-      dockerfile: Dockerfile.frappe
-    volumes:
-      - ./frappe:/home/frappe
+    image: frappe-base
     networks:
       - frappe_network
     ports:
       - "8000:8000"
+    volumes:
+      - ./frappe/:/home/frappe/
     environment:
       DB_HOST: mariadb
       REDIS_CACHE: redis://redis-cache:6379
@@ -25,19 +22,14 @@ services:
     command: >
       bash -c "
         if [ ! -f /home/frappe/.bootstrapped ]; then
-          if [ -z \"$(ls -A /home/frappe/frappe-bench)\" ]; then
-            bench init frappe-bench
-          fi &&
-          cd frappe-bench &&
+          bench init frappe-bench --frappe-branch version-15 &&
           bench setup env &&
           bench setup requirements &&
           yarn install &&
-          bench set-config -g developer_mode true &&
           touch /home/frappe/.bootstrapped
         fi &&
         cd /home/frappe/frappe-bench &&
         tail -f /dev/null"
-
 
   mariadb:
     image: mariadb:10.6
