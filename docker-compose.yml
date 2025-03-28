@@ -22,11 +22,15 @@ services:
     command: >
       bash -c "
         if [ ! -f /home/frappe/.bootstrapped ]; then
-          bench init frappe-bench --ignore-exist --frappe-branch version-15 \
-          --apps_path frappe/frappe-bench/sites/apps/json &&
+          git clone https://github.com/frappe/frappe.git --depth 1 -b version-15 /home/frappe/frappe-bench/apps/frappe &&
+          cd /home/frappe/frappe-bench/apps/frappe && 
           bench setup env &&
           bench setup requirements &&
-          yarn install
+          yarn install &&
+          cd /home/frappe/frappe-bench &&
+          bench get-app https://github.com/zuberpurahoomns/library_management.git --branch main &&
+          bench install-app library_management &&
+          cd apps/library_management && pre-commit install
         fi &&
         cd /home/frappe/frappe-bench &&
         bench set-config -g developer_mode true &&

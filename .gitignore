@@ -3,13 +3,12 @@
 .idea
 node_modules
 env
-logs
 .sudo_as_admin_successful
 .bootstrapped
 
-frappe/frappe-bench/apps/frappe
-Procfile
+frappe/frappe-bench/apps
 
 # Misc
 *.pid
 .test_log
+logs/**
