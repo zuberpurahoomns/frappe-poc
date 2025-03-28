@@ -1,5 +1,7 @@
 {
  "background_workers": 1,
+ "db_host": "mariadb",
+ "developer_mode": true,
  "file_watcher_port": 6787,
  "frappe_user": "frappe",
  "gunicorn_workers": 21,
@@ -14,6 +16,5 @@
  "shallow_clone": true,
  "socketio_port": 9000,
  "use_redis_auth": false,
- "webserver_port": 8000,
- "db_host": "mariadb"
+ "webserver_port": 8000
 }

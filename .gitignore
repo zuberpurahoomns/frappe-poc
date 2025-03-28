@@ -8,3 +8,7 @@ logs
 .bootstrapped
 
 frappe/frappe-bench/apps/frappe
+
+# Misc
+*.pid
+.test_log

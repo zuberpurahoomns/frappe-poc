@@ -29,6 +29,7 @@ services:
           touch /home/frappe/.bootstrapped
         fi &&
         cd /home/frappe/frappe-bench &&
+        bench set-config -g developer_mode true &&
         tail -f /dev/null"
 
   mariadb:
