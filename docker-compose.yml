@@ -1,0 +1,91 @@
+version: "3"
+
+services:
+  frappe:
+    container_name: frappe
+    build:
+      context: .
+      dockerfile: Dockerfile.frappe
+    volumes:
+      - ./frappe:/home/frappe
+    networks:
+      - frappe_network
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: mariadb
+      REDIS_CACHE: redis://redis-cache:6379
+      REDIS_QUEUE: redis://redis-queue:6379
+      REDIS_SOCKETIO: redis://redis-socketio:6379
+#    depends_on:
+#      - mariadb
+#      - redis-cache
+#      - redis-queue
+#      - redis-socketio
+    command: >
+      bash -c "
+        if [ ! -f /home/frappe/.bootstrapped ]; then
+          if [ -z \"$(ls -A /home/frappe/frappe-bench)\" ]; then
+            bench init frappe-bench
+          fi &&
+          cd frappe-bench &&
+          bench setup env &&
+          bench setup requirements &&
+          yarn install &&
+          bench set-config -g developer_mode true &&
+          touch /home/frappe/.bootstrapped
+        fi &&
+        cd /home/frappe/frappe-bench &&
+        tail -f /dev/null"
+
+
+  mariadb:
+    image: mariadb:10.6
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - frappe_network
+#
+#  redis-cache:
+#    image: redis:6.2-alpine
+#    container_name: redis-cache
+#    networks:
+#      - frappe_network
+#
+#  redis-queue:
+#    image: redis:6.2-alpine
+#    container_name: redis-queue
+#    networks:
+#      - frappe_network
+#
+#  redis-socketio:
+#    image: redis:6.2-alpine
+#    container_name: redis-socketio
+#    networks:
+#      - frappe_network
+#
+#  nginx:
+#    image: nginx:alpine
+#    container_name: frappe-nginx
+#    ports:
+#      - "8080:80"
+#    volumes:
+#      - ./nginx/conf.d:/etc/nginx/conf.d
+#    depends_on:
+#      - frappe
+#    networks:
+#      - frappe_network
+
+volumes:
+  db-data:
+  frappe:
+
+networks:
+  frappe_network:
+    driver: bridge
